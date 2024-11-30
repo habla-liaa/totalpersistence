@@ -14,7 +14,7 @@ from .utils import (
 
 def totalpersistence(coker_dgm, ker_dgm):
     """
-    Compute the total persistence using the bottleneck distance for the coker and ker diagrams.
+    TODO: Compute the total persistence using the bottleneck distance for the coker and ker diagrams.
     """
 
     coker_bottleneck_distances = []
