@@ -1,4 +1,5 @@
 import numpy as np
+import persim
 from ripser import ripser
 from scipy.spatial.distance import squareform
 from .utils import (
@@ -10,16 +11,32 @@ from .utils import (
     matrix_size_from_condensed,
 )
 
+from IPython import embed
 
-def totalpersistence(X, Y, f, maxdim=1, eps=0, tol=1e-11, perturb=1e-7):
+
+def totalpersistence(X, Y, f, maxdim=1, cone_eps=0, tol=1e-11, perturb=1e-7):
     dX = general_position_distance_matrix(X, perturb)
     dY = general_position_distance_matrix(Y, perturb)
 
-    data, dgm, dgmX, dgmY = kercoker_via_cone(dX, dY, f, maxdim, eps, tol, perturb)
+    coker_dgm, ker_dgm, cone_dgm, dgmX, dgmY = kercoker_via_cone(dX, dY, f, maxdim, cone_eps, tol)
 
-    distance_bottleneck, matching = persim.bottleneck(dgm_clean, dgm_noisy, matching=True)
+    coker_bottleneck_distances = []
+    coker_matchings = []
+    for k in range(len(coker_dgm)):
+        distance_bottleneck, matching = persim.bottleneck(coker_dgm[k], [], matching=True)
+        coker_bottleneck_distances.append(distance_bottleneck)
+        coker_matchings.append(matching)
 
-    return data, dgm, dgmX, dgmY
+    ker_bottleneck_distances = []
+    ker_matchings = []
+    for k in range(len(ker_dgm)):
+        distance_bottleneck, matching = persim.bottleneck(ker_dgm[k], [], matching=True)
+        ker_bottleneck_distances.append(distance_bottleneck)
+        ker_matchings.append(matching)
+
+    print(coker_bottleneck_distances)
+    print(ker_bottleneck_distances)
+    return coker_bottleneck_distances, ker_bottleneck_distances, coker_matchings, ker_matchings
 
 
 def kercoker_via_cone(dX, dY, f, maxdim=1, cone_eps=0, tol=1e-11):
