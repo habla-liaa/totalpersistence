@@ -1,7 +1,7 @@
-src
-===
+API Reference
+============
 
 .. toctree::
    :maxdepth: 4
 
-   python_package
+   totalpersistence
