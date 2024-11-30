@@ -1,1 +1,3 @@
-This directoy stores each Python Package.
+# Total Persistence
+
+This repository contains the code for computing the total persistence
