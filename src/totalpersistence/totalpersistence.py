@@ -11,14 +11,11 @@ from .utils import (
     matrix_size_from_condensed,
 )
 
-from IPython import embed
 
-
-def totalpersistence(X, Y, f, maxdim=1, cone_eps=0, tol=1e-11, perturb=1e-7):
-    dX = general_position_distance_matrix(X, perturb)
-    dY = general_position_distance_matrix(Y, perturb)
-
-    coker_dgm, ker_dgm, cone_dgm, dgmX, dgmY = kercoker_via_cone(dX, dY, f, maxdim, cone_eps, tol)
+def totalpersistence(coker_dgm, ker_dgm):
+    """
+    Compute the total persistence using the bottleneck distance for the coker and ker diagrams.
+    """
 
     coker_bottleneck_distances = []
     coker_matchings = []
@@ -34,8 +31,6 @@ def totalpersistence(X, Y, f, maxdim=1, cone_eps=0, tol=1e-11, perturb=1e-7):
         ker_bottleneck_distances.append(distance_bottleneck)
         ker_matchings.append(matching)
 
-    print(coker_bottleneck_distances)
-    print(ker_bottleneck_distances)
     return coker_bottleneck_distances, ker_bottleneck_distances, coker_matchings, ker_matchings
 
 
