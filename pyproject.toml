@@ -3,11 +3,12 @@ requires = ["flit_core >=2,<4"]
 build-backend = "flit_core.buildapi"
 
 [project]
-name =  "py-project-toml"
+name =  "totalpersistence"
 authors = [
-    {name = "Daniel Ciborowski", email = "dciborow@microsoft.com"},
+    {name = "Pablo Riera", email = "priera@dc.uba.ar"},
+    {name = "Manuela Cerdeiro", email = "mcerdeiro@dc.uba.ar"}
 ]
-description = "Sample Python Project for creating a new Python Module"
+description = "Total persistence for persistence diagrams"
 readme = "README.md"
 classifiers = [
     "Development Status :: 3 - Alpha",
@@ -21,11 +22,16 @@ classifiers = [
 ]
 requires-python = ">=3.8.1"
 dynamic = ["version"]
-
-[project.optional-dependencies]
-spark = [
-    "pyspark>=3.0.0"
+dependencies = [
+    "numpy>=1.21.0",
+    "scipy>=1.7.0",
+    "matplotlib>=3.4.0",
+    "pandas>=1.3.0",
+    "ripser>=0.6.0",
+    "persim>=0.3.0"
 ]
+
+
 test = [
     "bandit[toml]==1.7.5",
     "black==23.3.0",
@@ -47,12 +53,12 @@ test = [
 ]
 
 [project.urls]
-Documentation = "https://github.com/microsoft/python-package-template/tree/main#readme"
-Source = "https://github.com/microsoft/python-package-template"
-Tracker = "https://github.com/microsoft/python-package-template/issues"
+Documentation = "https://github.com/habla-liaa/totalpersistence"
+Source = "https://github.com/habla-liaa/totalpersistence"
+Tracker = "https://github.com/habla-liaa/totalpersistence/issues"
 
 [tool.flit.module]
-name = "python_package"
+name = "totalpersistence"
 
 [tool.bandit]
 exclude_dirs = ["build","dist","tests","scripts"]
