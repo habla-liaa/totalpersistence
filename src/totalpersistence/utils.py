@@ -49,15 +49,24 @@ def conematrix(DX, DY, DY_fy, eps):
     return D
 
 
+def format_bars(bars):
+    bars = [np.array(b) for b in bars]
+    lens = list(map(len, bars))
+    for i in range(len(bars)):
+        if all(l == 0 for l in lens[i:]):
+            bars = bars[:i]
+            break
+    return bars
+
+
 def kercoker_bars(dgm, dgmX, dgmY, cone_eps, tol=1e-11):
     """
     Find cokernel and kernel bars in the persistence diagram.
     TODO: optimize
     """
-    data = []
+    coker_dgm = [[] for _ in range(len(dgm))]
+    ker_dgm = [[] for _ in range(len(dgm))]
     for k in range(len(dgm)):
-        coker = []
-        ker = []
         for r in dgm[k]:
             b, d = r
             if d > cone_eps + tol:
@@ -66,12 +75,12 @@ def kercoker_bars(dgm, dgmX, dgmY, cone_eps, tol=1e-11):
                 # d_c = d_y_i
                 m = findclose(b, dgmY[k][:, 0], tol) & findclose(d, dgmY[k][:, 1], tol)
                 if sum(m):
-                    coker.append((b, d))
+                    coker_dgm[k].append((b, d))
 
                 # b_c = b_y_i
                 # d_c = b_x_j
                 if any(findclose(b, dgmY[k][:, 0], tol)) and any(findclose(d, dgmX[k][:, 0], tol)):
-                    coker.append((b, d))
+                    coker_dgm[k].append((b, d))
 
                 # ker
                 if k > 0:
@@ -79,16 +88,13 @@ def kercoker_bars(dgm, dgmX, dgmY, cone_eps, tol=1e-11):
                     # d_c = d_x_i (dim-1)
                     m = findclose(b, dgmX[k - 1][:, 0], tol) & findclose(d, dgmX[k - 1][:, 1], tol)
                     if sum(m):
-                        ker.append((b, d))
+                        ker_dgm[k - 1].append((b, d))
 
                     # b_c = d_y_i (dim-1)
                     # d_c = d_x_j (dim-1)
                     if any(findclose(b, dgmY[k - 1][:, 1], tol)) and any(findclose(d, dgmX[k - 1][:, 1], tol)):
-                        ker.append((b, d))
+                        ker_dgm[k - 1].append((b, d))
 
-        for c in coker:
-            data.append({"dim": k, "set": "coker", "b": c[0], "d": c[1]})
-        for c in ker:
-            data.append({"dim": k - 1, "set": "ker", "b": c[0], "d": c[1]})
-
-    return data
+    coker_dgm = format_bars(coker_dgm)
+    ker_dgm = format_bars(ker_dgm)
+    return coker_dgm, ker_dgm

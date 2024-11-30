@@ -13,26 +13,23 @@ def test_kercoker_via_cone():
     dY = general_position_distance_matrix(Y, perturb=1e-13)
 
     # Run the function
-    result = kercoker_via_cone(dX, dY, f, maxdim=2, cone_eps=0)[0]
-    print(result)
+    coker_dgm, ker_dgm, cone_dgm, dgmX, dgmY = kercoker_via_cone(dX, dY, f, maxdim=2, cone_eps=0)
 
     # Expected output
-    expected = [
-        {"dim": 0, "set": "coker", "b": 0.0, "d": float("inf")},
-        {"dim": 0, "set": "ker", "b": 0.5, "d": 1.0},
-        {"dim": 0, "set": "ker", "b": 0.5, "d": 1.0},
-        {"dim": 0, "set": "ker", "b": 0.0, "d": 1.0},
-        {"dim": 0, "set": "ker", "b": 0.0, "d": 1.0},
-        {"dim": 0, "set": "ker", "b": 0.0, "d": 1.0},
-        {"dim": 1, "set": "ker", "b": 1.0, "d": 1.4142135381698608},
-        {"dim": 1, "set": "ker", "b": 1.0, "d": 1.4142135381698608},
+    # for coker in [array([[ 0., inf]])]
+    # for ker in [array([[ 0.5,  1. ], [ 0.5,  1. ], [ 0. ,  1. ], [ 0. ,  1. ], [ 0. ,  1. ]),
+    # array([[ 1. ,  1.41421356], [ 1. ,  1.41421356]])]
+
+    expected_coker = np.array([[0.0, float("inf")]])
+    expected_ker = [
+        np.array([[0.5, 1.0], [0.5, 1.0], [0.0, 1.0], [0.0, 1.0], [0.0, 1.0]]),
+        np.array([[1.0, 1.41421356], [1.0, 1.41421356]]),
     ]
     tol = 1e-10
 
     # Compare results
-    assert len(result) == len(expected)
-    for r, e in zip(result, expected):
-        assert r["dim"] == e["dim"]
-        assert r["set"] == e["set"]
-        assert abs(r["b"] - e["b"]) < tol
-        assert abs(r["d"] - e["d"]) < tol if e["d"] != float("inf") else r["d"] == float("inf")
+    assert len(coker_dgm) == 1
+    assert np.allclose(coker_dgm[0], expected_coker, atol=tol)
+    assert len(ker_dgm) == 2
+    for r, e in zip(ker_dgm, expected_ker):
+        assert np.allclose(r, e, atol=tol)

@@ -9,7 +9,6 @@ from .utils import (
     kercoker_bars,
     matrix_size_from_condensed,
 )
-from IPython import embed
 
 
 def totalpersistence(X, Y, f, maxdim=1, eps=0, tol=1e-11, perturb=1e-7):
@@ -17,6 +16,9 @@ def totalpersistence(X, Y, f, maxdim=1, eps=0, tol=1e-11, perturb=1e-7):
     dY = general_position_distance_matrix(Y, perturb)
 
     data, dgm, dgmX, dgmY = kercoker_via_cone(dX, dY, f, maxdim, eps, tol, perturb)
+
+    distance_bottleneck, matching = persim.bottleneck(dgm_clean, dgm_noisy, matching=True)
+
     return data, dgm, dgmX, dgmY
 
 
@@ -60,7 +62,7 @@ def kercoker_via_cone(dX, dY, f, maxdim=1, cone_eps=0, tol=1e-11):
 
     dgmX = ripser(squareform(dX), distance_matrix=True, maxdim=maxdim)["dgms"]
     dgmY = ripser(squareform(dY), distance_matrix=True, maxdim=maxdim)["dgms"]
-    dgm = ripser(D, maxdim=maxdim, distance_matrix=True)["dgms"]
+    cone_dgm = ripser(D, maxdim=maxdim, distance_matrix=True)["dgms"]
 
-    bars = kercoker_bars(dgm, dgmX, dgmY, cone_eps, tol)
-    return bars, dgm, dgmX, dgmY
+    coker_dgm, ker_dgm = kercoker_bars(cone_dgm, dgmX, dgmY, cone_eps, tol)
+    return coker_dgm, ker_dgm, cone_dgm, dgmX, dgmY
