@@ -17,9 +17,9 @@ def matrix_size_from_condensed(dX):
 def to_condensed_form(i, j, m):
     return m * i + j - ((i + 2) * (i + 1)) // 2.0
 
-def general_position_distance_matrix(X, perturb=1e-7):
+def general_position_distance_matrix(X, d=1e-7):
     n = len(X)
-    Xperturbation = perturb * np.random.rand((n * (n - 1) // 2))
+    Xperturbation = d * np.random.rand((n * (n - 1) // 2))
     dX = pdist(X) + Xperturbation
     return dX
 
@@ -119,6 +119,7 @@ def kercoker_bars(dgm, dgmX, dgmY, cone_eps, tol=1e-11):
     """
     Find cokernel and kernel bars in the persistence diagram.
     TODO: optimize
+    TODO: remove un [0, inf] en h0 de dgm
     """
     coker_dgm = [[] for _ in range(len(dgm))]
     ker_dgm = [[] for _ in range(len(dgm))]

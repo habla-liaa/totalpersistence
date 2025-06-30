@@ -12,6 +12,7 @@ from .utils import (
     matrix_size_from_condensed,
 )
 
+
 def totalpersistence(coker_dgm, ker_dgm):
     """
     TODO: Compute the total persistence using the bottleneck distance for the coker and ker diagrams.
@@ -20,14 +21,16 @@ def totalpersistence(coker_dgm, ker_dgm):
     coker_bottleneck_distances = []
     coker_matchings = []
     for k in range(len(coker_dgm)):
-        distance_bottleneck, matching = persim.bottleneck(coker_dgm[k], [], matching=True)
+        distance_bottleneck, matching = persim.bottleneck(
+            coker_dgm[k], [], matching=True)
         coker_bottleneck_distances.append(distance_bottleneck)
         coker_matchings.append(matching)
 
     ker_bottleneck_distances = []
     ker_matchings = []
     for k in range(len(ker_dgm)):
-        distance_bottleneck, matching = persim.bottleneck(ker_dgm[k], [], matching=True)
+        distance_bottleneck, matching = persim.bottleneck(
+            ker_dgm[k], [], matching=True)
         ker_bottleneck_distances.append(distance_bottleneck)
         ker_matchings.append(matching)
 
@@ -81,7 +84,7 @@ def kercoker_via_cone_old(dX, dY, f, maxdim=1, cone_eps=0, tol=1e-11):
     return coker_dgm, ker_dgm, cone_dgm, dgmX, dgmY
 
 
-def kercoker_via_cone(dX, dY, f, maxdim=1, cone_eps=0, tol=1e-11, compute_img=False):
+def kercoker_via_cone(dX, dY, f, maxdim=1, cone_eps: float = 1e-10, tol=1e-11, compute_img=False):
     """
     TODO: Compute the total persistence diagram using the cone algorithm.
 
@@ -95,6 +98,8 @@ def kercoker_via_cone(dX, dY, f, maxdim=1, cone_eps=0, tol=1e-11, compute_img=Fa
         Function values.
     """
 
+    assert cone_eps > 0, "cone_eps must be non-negative"
+
     D = conematrix(dX, dY, f, cone_eps)
 
     dgmX = ripser(squareform(dX), distance_matrix=True, maxdim=maxdim)["dgms"]
@@ -102,8 +107,10 @@ def kercoker_via_cone(dX, dY, f, maxdim=1, cone_eps=0, tol=1e-11, compute_img=Fa
     cone_dgm = ripser(D, maxdim=maxdim, distance_matrix=True)["dgms"]
 
     if compute_img:
-        raise NotImplementedError("The compute_img option is not implemented yet.")
-        coker_dgm, ker_dgm, img_dgm = kercokerimg_bars(cone_dgm, dgmX, dgmY, cone_eps, tol)
+        raise NotImplementedError(
+            "The compute_img option is not implemented yet.")
+        coker_dgm, ker_dgm, img_dgm = kercokerimg_bars(
+            cone_dgm, dgmX, dgmY, cone_eps, tol)
         return coker_dgm, ker_dgm, img_dgm, cone_dgm, dgmX, dgmY
     else:
         coker_dgm, ker_dgm = kercoker_bars(cone_dgm, dgmX, dgmY, cone_eps, tol)
