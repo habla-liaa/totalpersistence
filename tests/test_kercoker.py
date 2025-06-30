@@ -31,5 +31,10 @@ def test_kercoker_via_cone():
     assert len(coker_dgm) == 1
     assert np.allclose(coker_dgm[0], expected_coker, atol=tol)
     assert len(ker_dgm) == 2
+
+    print("Expected Coker Diagram:", expected_coker)
+    print("Coker Diagram:", coker_dgm)
+    print("Expected Kernel Diagrams:", expected_ker)
+    print("Kernel Diagrams:", ker_dgm)
     for r, e in zip(ker_dgm, expected_ker):
         assert np.allclose(r, e, atol=tol)

@@ -8,9 +8,9 @@ from .utils import (
     to_condensed_form,
     conematrix,
     kercoker_bars,
+    kercokerimg_bars,
     matrix_size_from_condensed,
 )
-
 
 def totalpersistence(coker_dgm, ker_dgm):
     """
@@ -34,7 +34,7 @@ def totalpersistence(coker_dgm, ker_dgm):
     return coker_bottleneck_distances, ker_bottleneck_distances, coker_matchings, ker_matchings
 
 
-def kercoker_via_cone(dX, dY, f, maxdim=1, cone_eps=0, tol=1e-11):
+def kercoker_via_cone_old(dX, dY, f, maxdim=1, cone_eps=0, tol=1e-11):
     """
     TODO: Compute the total persistence diagram using the cone algorithm.
 
@@ -76,5 +76,35 @@ def kercoker_via_cone(dX, dY, f, maxdim=1, cone_eps=0, tol=1e-11):
     dgmY = ripser(squareform(dY), distance_matrix=True, maxdim=maxdim)["dgms"]
     cone_dgm = ripser(D, maxdim=maxdim, distance_matrix=True)["dgms"]
 
+    # coker_dgm, ker_dgm, img_dgm = kercokerimg_bars(cone_dgm, dgmX, dgmY, cone_eps, tol)
     coker_dgm, ker_dgm = kercoker_bars(cone_dgm, dgmX, dgmY, cone_eps, tol)
     return coker_dgm, ker_dgm, cone_dgm, dgmX, dgmY
+
+
+def kercoker_via_cone(dX, dY, f, maxdim=1, cone_eps=0, tol=1e-11, compute_img=False):
+    """
+    TODO: Compute the total persistence diagram using the cone algorithm.
+
+    Parameters
+    ----------
+    dX : np.array
+        Distance matrix of the source space in condensed form.
+    dY : np.array
+        Distance matrix of the target space in condensed form.
+    f : np.array
+        Function values.
+    """
+
+    D = conematrix(dX, dY, f, cone_eps)
+
+    dgmX = ripser(squareform(dX), distance_matrix=True, maxdim=maxdim)["dgms"]
+    dgmY = ripser(squareform(dY), distance_matrix=True, maxdim=maxdim)["dgms"]
+    cone_dgm = ripser(D, maxdim=maxdim, distance_matrix=True)["dgms"]
+
+    if compute_img:
+        raise NotImplementedError("The compute_img option is not implemented yet.")
+        coker_dgm, ker_dgm, img_dgm = kercokerimg_bars(cone_dgm, dgmX, dgmY, cone_eps, tol)
+        return coker_dgm, ker_dgm, img_dgm, cone_dgm, dgmX, dgmY
+    else:
+        coker_dgm, ker_dgm = kercoker_bars(cone_dgm, dgmX, dgmY, cone_eps, tol)
+        return coker_dgm, ker_dgm, cone_dgm, dgmX, dgmY
