@@ -118,9 +118,11 @@ def kercoker_via_cone(dX, dY, f, maxdim=1, cone_eps=0.0, tol=1e-11):
     # dX     DY_fy
     # DY_fy  dY
     D = conematrix(squareform(dX), squareform(dY), DY_fy, cone_eps)
-    log("Distance matrix D:", D.round(2))
+    log("Distance matrix D:", D)
 
+    print("X d:", dX)
     dgmX = ripser(squareform(dX), distance_matrix=True, maxdim=maxdim)["dgms"]
+    print("X diagram:", dgmX)
     dgmY = ripser(squareform(dY), distance_matrix=True, maxdim=maxdim)["dgms"]
     cone_dgm = ripser(D, maxdim=maxdim, distance_matrix=True)["dgms"]
 

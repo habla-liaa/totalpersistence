@@ -1,6 +1,5 @@
 import numpy as np
 from scipy.spatial.distance import pdist, squareform
-from IPython import embed
 
 
 def print_diagram(title, diagram):
@@ -77,7 +76,7 @@ def kercoker_bars(dgm, dgmX, dgmY, cone_eps, tol=1e-11):
     """
     coker_dgm = [[] for _ in range(len(dgm))]
     ker_dgm = [[] for _ in range(len(dgm))]
-    for k in range(len(dgm)):
+    for k in range(len(dgm)): # dimension cone diagram
         for r in dgm[k]:
             b, d = r
             if d > cone_eps + tol:
