@@ -38,7 +38,8 @@ def conematrix(DX, DY, DY_fy, eps):
     D[0:n, n : n + m] = DY_fy
     D[n : n + m, 0:n] = DY_fy.T
 
-    R = max(DX.max(), DY_fy.max()) + 1
+    R = np.inf
+    # R = max(DX.max(), DY_fy.max()) + 1 instead of np.inf
 
     D[n + m, n : n + m] = R
     D[n : n + m, n + m] = R

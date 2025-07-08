@@ -11,6 +11,14 @@ from .utils import (
     matrix_size_from_condensed,
 )
 
+DEBUG = True
+def log(*args, **kwargs):
+    """
+    Log messages if DEBUG is True.
+    """
+    if DEBUG:
+        print(*args, **kwargs)
+
 
 def totalpersistence(coker_dgm, ker_dgm):
     """
@@ -34,7 +42,22 @@ def totalpersistence(coker_dgm, ker_dgm):
     return coker_bottleneck_distances, ker_bottleneck_distances, coker_matchings, ker_matchings
 
 
-def kercoker_via_cone(dX, dY, f, maxdim=1, cone_eps=0, tol=1e-11):
+"""
+    # dY_fy = d(f(x_i),y_j) para todo i,j
+    indices = np.indices((n, m))
+    i = indices[0].flatten()
+    j = indices[1].flatten()
+    f_i = f[i]
+    DY_fy = np.zeros((n, m))
+    DY_fy[i, j] = squareform(dY)[f_i, j]
+    # está última linea hay que cambiarla agregando una sutileza.
+    # La entrada: 
+    # DY_fy[i, j] entre un índice cualquiera "i" (de X) y un "j" (de la llegada Y)
+    # tiene que ser infinito en caso de que "j" no esté en la imagen de f.
+"""
+
+
+def kercoker_via_cone(dX, dY, f, maxdim=1, cone_eps=0.0, tol=1e-11):
     """
     TODO: Compute the total persistence diagram using the cone algorithm.
 
@@ -64,13 +87,35 @@ def kercoker_via_cone(dX, dY, f, maxdim=1, cone_eps=0, tol=1e-11):
     i = indices[0].flatten()
     j = indices[1].flatten()
     f_i = f[i]
-    DY_fy = np.zeros((n, m))
+
+    # DY_fy = np.zeros((n, m))
+    # DY_fy[i, j] = np.inf
+    # DY_fy[i, j] = squareform(dY)[f_i, j]
+
+    # La entrada:
+    # DY_fy[i, j] entre un índice cualquiera "i" (de X) y un "j" (de la llegada Y)
+    # tiene que ser infinito en caso de que "j" no esté en la imagen de f.
+
+    DY_fy = np.ones((n, m), dtype=float) * np.inf
+
+    ijs = [(ii, jj) for ii, jj in zip(i, j) if jj in f_i]
+    i, j = zip(*ijs)
+    i = np.array(i, dtype=int)
+    j = np.array(j, dtype=int)
+
+    f_i = f[i]
+
     DY_fy[i, j] = squareform(dY)[f_i, j]
 
     L = lipschitz(dX, dY_ff)
+    log(f"lipschitz constant: {L:.2f}")
+
     dY = dY / L
 
+    # dX     DY_fy
+    # DY_fy  dY
     D = conematrix(squareform(dX), squareform(dY), DY_fy, cone_eps)
+    log("Distance matrix D:", D.round(2))
 
     dgmX = ripser(squareform(dX), distance_matrix=True, maxdim=maxdim)["dgms"]
     dgmY = ripser(squareform(dY), distance_matrix=True, maxdim=maxdim)["dgms"]
