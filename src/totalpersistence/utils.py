@@ -3,6 +3,16 @@ from scipy.spatial.distance import pdist, squareform
 from IPython import embed
 
 
+def print_diagram(title, diagram):
+    print(title)
+    for dim, dgm in enumerate(diagram):
+        print(f"Dimension {dim}:")
+        if len(dgm) == 0:
+            print("  No points")
+        else:
+            for point in dgm:
+                print(f"  {point}")
+
 def findclose(x, A, tol=1e-5):
     return ((x + tol) >= A) & ((x - tol) <= A)
 
