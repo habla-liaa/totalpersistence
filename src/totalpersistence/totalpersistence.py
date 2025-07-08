@@ -79,8 +79,10 @@ def kercoker_via_cone(dX, dY, f, maxdim=1, cone_eps=0.0, tol=1e-11):
     # dY_ff = d(f(x_i),f(x_j)) para todo i,j
     i, j = np.triu_indices(n, k=1)
     f_i, f_j = f[i], f[j]
-    f_pos = to_condensed_form(f_i, f_j, m)
-    dY_ff = dY[f_pos.astype(int)]
+    # f_pos = to_condensed_form(f_i, f_j, m)
+    # dY_ff = dY[f_pos.astype(int)]
+    
+    dY_ff = squareform(dY)[f_i, f_j]
 
     # dY_fy = d(f(x_i),y_j) para todo i,j
     indices = np.indices((n, m))
@@ -107,6 +109,7 @@ def kercoker_via_cone(dX, dY, f, maxdim=1, cone_eps=0.0, tol=1e-11):
 
     DY_fy[i, j] = squareform(dY)[f_i, j]
 
+    
     L = lipschitz(dX, dY_ff)
     log(f"lipschitz constant: {L:.2f}")
 
