@@ -2,6 +2,7 @@ import numpy as np
 import persim
 from ripser import ripser
 from scipy.spatial.distance import squareform
+import torch
 from .utils import (
     lipschitz,
     general_position_distance_matrix,
@@ -56,6 +57,10 @@ def totalpersistence(coker_dgm, ker_dgm):
     # tiene que ser infinito en caso de que "j" no esté en la imagen de f.
 """
 
+def conematrix_torch(dX:torch.Tensor, dY:torch.Tensor, f:torch.Tensor, maxdim=1, cone_eps=0.0, tol=1e-11):
+
+    raise NotImplementedError("This function is not implemented yet. Use conematrix instead.")
+
 
 def kercoker_via_cone(dX, dY, f, maxdim=1, cone_eps=0.0, tol=1e-11):
     """
@@ -108,7 +113,6 @@ def kercoker_via_cone(dX, dY, f, maxdim=1, cone_eps=0.0, tol=1e-11):
     f_i = f[i]
 
     DY_fy[i, j] = squareform(dY)[f_i, j]
-
     
     L = lipschitz(dX, dY_ff)
     log(f"lipschitz constant: {L:.2f}")
@@ -118,6 +122,7 @@ def kercoker_via_cone(dX, dY, f, maxdim=1, cone_eps=0.0, tol=1e-11):
     # dX     DY_fy
     # DY_fy  dY
     D = conematrix(squareform(dX), squareform(dY), DY_fy, cone_eps)
+
     log("Distance matrix D:", D)
 
     dgmX = ripser(squareform(dX), distance_matrix=True, maxdim=maxdim)["dgms"]
