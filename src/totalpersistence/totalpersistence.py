@@ -79,7 +79,7 @@ def kercoker_via_cone(dX, dY, f, maxdim=1, cone_eps=0.0, tol=1e-11):
     # dY_ff = d(f(x_i),f(x_j)) para todo i,j
     i, j = np.triu_indices(n, k=1)
     f_i, f_j = f[i], f[j]
-    # f_pos = to_condensed_form(f_i, f_j, m)
+    # f_pos = to_condensed_form(f_i, f_j, m) # broken
     # dY_ff = dY[f_pos.astype(int)]
     
     dY_ff = squareform(dY)[f_i, f_j]
@@ -120,9 +120,7 @@ def kercoker_via_cone(dX, dY, f, maxdim=1, cone_eps=0.0, tol=1e-11):
     D = conematrix(squareform(dX), squareform(dY), DY_fy, cone_eps)
     log("Distance matrix D:", D)
 
-    print("X d:", dX)
     dgmX = ripser(squareform(dX), distance_matrix=True, maxdim=maxdim)["dgms"]
-    print("X diagram:", dgmX)
     dgmY = ripser(squareform(dY), distance_matrix=True, maxdim=maxdim)["dgms"]
     cone_dgm = ripser(D, maxdim=maxdim, distance_matrix=True)["dgms"]
 
