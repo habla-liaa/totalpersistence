@@ -1,6 +1,6 @@
 import numpy as np
 from scipy.spatial.distance import pdist, squareform
-
+import torch
 
 def print_diagram(title, diagram):
     print(title)
@@ -108,3 +108,57 @@ def kercoker_bars(dgm, dgmX, dgmY, cone_eps, tol=1e-11):
     coker_dgm = format_bars(coker_dgm)
     ker_dgm = format_bars(ker_dgm)
     return coker_dgm, ker_dgm
+
+
+
+
+DEBUG = True
+def log(*args, **kwargs):
+    """
+    Log messages if DEBUG is True.
+    """
+    if DEBUG:
+        print(*args, **kwargs)
+
+
+#####################################################################################
+def conematrix_numpy(dX:torch.Tensor, dY:torch.Tensor, f:torch.Tensor, maxdim=1, cone_eps=0.0, tol=1e-11):
+    n = matrix_size_from_condensed(dX)
+    m = matrix_size_from_condensed(dY)
+
+    f = np.array(f)
+
+    
+    i, j = np.triu_indices(n, k=1)
+    f_i, f_j = f[i], f[j]
+    
+    
+    dY_ff = squareform(dY)[f_i, f_j]
+
+    
+    indices = np.indices((n, m))
+    i = indices[0].flatten()
+    j = indices[1].flatten()
+    f_i = f[i]
+
+    
+
+    DY_fy = np.ones((n, m), dtype=float) * np.inf
+    
+    ijs = [(ii, jj) for ii, jj in zip(i, j) if jj in f_i]
+    i, j = zip(*ijs)
+    i = np.array(i, dtype=int)
+    j = np.array(j, dtype=int)
+
+    f_i = f[i]
+
+    DY_fy[i, j] = squareform(dY)[f_i, j]
+    
+    L = lipschitz(dX, dY_ff)
+    log(f"lipschitz constant: {L:.2f}")
+
+    dY = dY / L
+
+
+    D = conematrix(squareform(dX), squareform(dY), DY_fy, cone_eps)
+    return D
